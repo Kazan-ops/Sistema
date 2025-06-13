@@ -26,6 +26,26 @@ int pedirEnteroPositivo(const string& mensaje) {
     }
 }
 
+float pedirNota(const string& mensaje) {
+    float valor;
+    while (true) {
+        cout << mensaje;
+        cin >> valor;
+
+        if (cin.fail() || valor < 0.0 || valor > 100.0){
+            cout << "Su entrada es invalida, diginte una nota que sea entre 0 y 100" << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return valor;
+        }
+    }
+}
+
+//  Struct Alumno original esta incopleto se elimino tambien (edad y notas)
+// Esta ahora s la struct final de Alumnos
+
 struct Alumno {
     string nombre, apellido1, apellido2;
     int ciclo, cedula;
@@ -34,6 +54,9 @@ struct Alumno {
 };
 // Estos espara capturar los datos y el de arriba usted sabe para que es
 
+
+//Funcion original de capturaAlumnos tambien esta incopleta, eliminado
+//Funcion final de captura
 Alumno capturaAlumno(int numero){
     Alumno a;
     cout << "\n==============================" << endl;
@@ -58,13 +81,12 @@ Alumno capturaAlumno(int numero){
 
 int main (){
     int cantidadAlumnos = pedirEnteroPositivo ("Cuantos alumnos desea evaluar? ");
-
+    vector<Alumno> alumnos;
+    
     //Aqui vamos a crear un bucle para capturar los datos de cada alumno
     // Darian usted puede ir implementando la estructura Alumno y el Vector dinamico de los Alumnos
     // A su vezpuedes definir la funcion capturaAlumnos() para que nos ordenemos mejor
-
-    vector<Alumno> alumnos;
-
+ 
     for(int i=0; i< cantidadAlumnos; i++){
         Alumno nuevoAlumno =capturaAlumno(i + 1);
         alumnos.push_back(nuevoAlumno);

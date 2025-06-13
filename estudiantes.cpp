@@ -1,8 +1,15 @@
 #include <iostream>
 #include <vector>
 #include <limits> //Si preguntas esto lo que hace es limpiar el buffer
+#include <string>
 
 using namespace std;
+
+struct Alumno {
+    string nombre;
+    int edad;
+    float nota;
+};
 
 int pedirEnteroPositivo(const string& mensaje) {
     int valor;
@@ -11,29 +18,62 @@ int pedirEnteroPositivo(const string& mensaje) {
         cin >> valor;
 
         if (cin.fail() || valor <=0){
-
             cout <<"Entrada invalida. Por favor ingrese un numero entero mayor a cero" << endl;
-
             cin.clear();
-
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         } else {
-
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
             return valor;
         }
     }
 }
 
+float pedirNota(const string& mensaje) {
+    float valor;
+    while (true) {
+        cout << mensaje;
+        cin >> valor;
+
+        if (cin.fail() || valor < 0.0 || valor > 100.0) {
+            cout << "Entrada invalida. Ingrese una nota entre 0 y 100." << endl;
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        } else {
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return valor;
+        }
+    }
+}
+
+void capturaAlumnos(vector<Alumno>& alumnos, int cantidad) {
+    for (int i = 0; i < cantidad; ++i) {
+        Alumno a;
+        cout << "\nAlumno #" << (i + 1) << endl;
+
+        cout << "Nombre: ";
+        getline(cin, a.nombre);
+
+        a.edad = pedirEnteroPositivo("Edad: ");
+        a.nota = pedirNota("Nota final: ");
+
+        alumnos.push_back(a);
+    }
+}
+
 int main (){
     int cantidadAlumnos = pedirEnteroPositivo ("Cuantos alumnos desea evaluar? ");
+    vector<Alumno> alumnos;
+    
+    capturaAlumnos(alumnos, cantidadAlumnos);
 
-    //Aqui vamos a crear un bucle para capturar los datos de cada alumno
-    // Darian usted puede ir implementando la estructura Alumno y el Vector dinamico de los Alumnos
-    // A su vezpuedes definir la funcion capturaAlumnos() para que nos ordenemos mejor
-
-    cout << "Cantidad de alumnos a evaluar: " << cantidadAlumnos << endl;
+    // Mostrar los datos capturados
+    cout << "\n=== Datos de los alumnos ===\n";
+    for (int i = 0; i < alumnos.size(); ++i) {
+        cout << "Alumno #" << (i + 1) << ": "
+             << alumnos[i].nombre << ", Edad: "
+             << alumnos[i].edad << ", Nota: "
+             << alumnos[i].nota << endl;
+    }
 
     return 0;
 }

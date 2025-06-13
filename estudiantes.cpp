@@ -17,7 +17,6 @@ int pedirEnteroPositivo(const string& mensaje) {
     while (true) {
         cout << mensaje;
         cin >> valor;
-
         if (cin.fail() || valor <= 0) {
             cout << "Entrada invalida. Por favor ingrese un numero entero mayor a cero." << endl;
             cin.clear();
@@ -34,7 +33,6 @@ float pedirNota(int numero) {
     while (true) {
         cout << "Ingrese la nota #" << numero << ": ";
         cin >> valor;
-
         if (cin.fail() || valor < 0.0 || valor > 100.0) {
             cout << "Entrada invalida. Ingrese una nota entre 0 y 100." << endl;
             cin.clear();
@@ -46,13 +44,21 @@ float pedirNota(int numero) {
     }
 }
 
+float calcularPromedio(const vector<float>& notas) {
+    float suma = 0;
+    for (size_t i = 0; i < notas.size(); ++i) {
+        suma += notas[i];
+    }
+    return notas.empty() ? 0 : suma / notas.size();
+}
+
 Alumno capturaAlumno(int numero) {
     Alumno a;
     cout << "\n==============================" << endl;
     cout << "  Ingreso de datos - Alumno #" << numero << endl;
     cout << "==============================" << endl;
 
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');  // limpiar buffer antes de getline
+    cin.ignore(numeric_limits<streamsize>::max(), '\n'); 
 
     cout << "Ingrese primer nombre: ";
     getline(cin, a.nombre);
@@ -66,16 +72,22 @@ Alumno capturaAlumno(int numero) {
     a.ciclo = pedirEnteroPositivo("Ingrese ciclo de estudio: ");
     a.cedula = pedirEnteroPositivo("Ingrese numero de cedula: ");
 
-    float sumaNotas = 0;
     for (int i = 0; i < 5; ++i) {
-        float nota = pedirNota(i + 1);
-        a.notas.push_back(nota);
-        sumaNotas += nota;
+        a.notas.push_back(pedirNota(i + 1));
     }
 
-    a.promedio = sumaNotas / 5.0;
-
+    a.promedio = calcularPromedio(a.notas);
     return a;
+}
+
+void clasificarAlumnos(const vector<Alumno>& alumnos, vector<Alumno>& aprobados, vector<Alumno>& reprobados) {
+    for (size_t i = 0; i < alumnos.size(); ++i) {
+        if (alumnos[i].promedio >= 60.0) {
+            aprobados.push_back(alumnos[i]);
+        } else {
+            reprobados.push_back(alumnos[i]);
+        }
+    }
 }
 
 int main() {
@@ -83,21 +95,24 @@ int main() {
     vector<Alumno> alumnos;
 
     for (int i = 0; i < cantidadAlumnos; ++i) {
-        Alumno nuevoAlumno = capturaAlumno(i + 1);
-        alumnos.push_back(nuevoAlumno);
+        alumnos.push_back(capturaAlumno(i + 1));
     }
 
-    cout << "\n=== Datos de los alumnos ===\n";
-    for (int i = 0; i < (int)alumnos.size(); ++i) {
-        Alumno a = alumnos[i];
-        cout << "Alumno #" << (i + 1) << ": " << a.nombre << " " << a.apellido1 << " " << a.apellido2
-             << "\nCedula: " << a.cedula
-             << "\nCiclo: " << a.ciclo
-             << "\nNotas: ";
-        for (size_t j = 0; j < a.notas.size(); ++j) {
-            cout << a.notas[j] << " ";
-        }
-        cout << "\nPromedio: " << a.promedio << "\n\n";
+    vector<Alumno> aprobados;
+    vector<Alumno> reprobados;
+
+    clasificarAlumnos(alumnos, aprobados, reprobados);
+
+    cout << "\n=== Alumnos Aprobados ===\n";
+    for (size_t i = 0; i < aprobados.size(); ++i) {
+        cout << aprobados[i].nombre << " " << aprobados[i].apellido1 << " " << aprobados[i].apellido2
+             << " - Promedio: " << aprobados[i].promedio << "\n";
+    }
+
+    cout << "\n=== Alumnos Reprobados ===\n";
+    for (size_t i = 0; i < reprobados.size(); ++i) {
+        cout << reprobados[i].nombre << " " << reprobados[i].apellido1 << " " << reprobados[i].apellido2
+             << " - Promedio: " << reprobados[i].promedio << "\n";
     }
 
     return 0;

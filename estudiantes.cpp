@@ -2,9 +2,22 @@
 #include <vector>
 #include <limits> //Si preguntas esto lo que hace es limpiar el buffer
 #include <string>
+#include <iomanip>
 
 using namespace std;
 
+// Struct Alumno original esta incopleto se elimino tambien (edad y notas)
+// Esta ahora s la struct final de Alumnos
+struct Alumno {
+    string nombre, apellido1, apellido2;
+    int ciclo, cedula;
+    vector<float> notas;
+    float promedio;
+};
+// Estos espara capturar los datos y el de arriba usted sabe para que es
+
+//Funcion original de capturaAlumnos tambien esta incopleta, eliminado
+//Funcion final de captura
 int pedirEnteroPositivo(const string& mensaje) {
     int valor;
     while (true) {
@@ -12,29 +25,7 @@ int pedirEnteroPositivo(const string& mensaje) {
         cin >> valor;
 
         if (cin.fail() || valor <= 0) {
-
             cout << "Entrada invalida. Por favor ingrese un numero entero mayor a cero" << endl;
-
-            cin.clear();
-
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        } else {
-
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-            return valor;
-        }
-    }
-}
-
-float pedirNota(const string& mensaje) {
-    float valor;
-    while (true) {
-        cout << mensaje;
-        cin >> valor;
-
-        if (cin.fail() || valor < 0.0 || valor > 100.0){
-            cout << "Su entrada es invalida, diginte una nota que sea entre 0 y 100" << endl;
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
         } else {
@@ -42,42 +33,6 @@ float pedirNota(const string& mensaje) {
             return valor;
         }
     }
-}
-
-//  Struct Alumno original esta incopleto se elimino tambien (edad y notas)
-// Esta ahora s la struct final de Alumnos
-
-struct Alumno {
-    string nombre, apellido1, apellido2;
-    int ciclo, cedula;
-    vector <float> notas;
-    float promedio;
-};
-// Estos espara capturar los datos y el de arriba usted sabe para que es
-
-
-//Funcion original de capturaAlumnos tambien esta incopleta, eliminado
-//Funcion final de captura
-Alumno capturaAlumno(int numero){
-    Alumno a;
-    cout << "\n==============================" << endl;
-    cout << "  Ingreso de datos - Alumno #" << numero << endl;
-    cout << "==============================" << endl;
-
-    cout << "Ingrese primer nombre";
-    cin.ignore();
-    getline(cin, a.nombre);
-
-    cout << "Ingrese primer apellido: ";
-    getline(cin, a.apellido1);
-
-    cout << "Ingrese segundo apellido: ";
-    getline(cin, a.apellido2);
-
-    a.ciclo=pedirEnteroPositivo("Ingrese ciclo de estudio: ");
-    a.cedula=pedirEnteroPositivo("Ingrese numero de cedula");
-
-    return a;
 }
 
 //Esta función ahora usa el número para mostrar cuál nota se está pidiendo
@@ -98,18 +53,6 @@ float pedirNota(int numero) {
     }
 }
 
-//  Struct Alumno original esta incopleto se elimino tambien (edad y notas)
-// Esta ahora s la struct final de Alumnos
-
-struct Alumno {
-    string nombre, apellido1, apellido2;
-    int ciclo, cedula;
-    vector<float> notas;
-    float promedio;
-};
-// Estos espara capturar los datos y el de arriba usted sabe para que es
-
-//Funcion original de capturaAlumnos tambien esta incopleta, eliminado
 //Funcion final de captura
 Alumno capturaAlumno(int numero) {
     Alumno a;
@@ -117,8 +60,8 @@ Alumno capturaAlumno(int numero) {
     cout << "  Ingreso de datos - Alumno #" << numero << endl;
     cout << "==============================" << endl;
 
-    cout << "Ingrese primer nombre";
-    cin.ignore();
+    cin.ignore(); // Limpiar antes de getline
+    cout << "Ingrese primer nombre: ";
     getline(cin, a.nombre);
 
     cout << "Ingrese primer apellido: ";
@@ -141,6 +84,26 @@ Alumno capturaAlumno(int numero) {
     return a;
 }
 
+// Funcion para mostrar listas de alumnos aprobados y reprobados
+void mostrarAlumnos(const vector<Alumno>& lista, const string& titulo) {
+    cout << "\n========== " << titulo << " ==========\n";
+    cout << left << setw(30) << "Nombre completo"
+         << setw(8) << "Ciclo"
+         << setw(15) << "Cedula"
+         << setw(10) << "Promedio" << endl;
+    cout << "--------------------------------------------------------------\n";
+
+    for (const Alumno& a : lista) {
+        string nombreCompleto = a.nombre + " " + a.apellido1 + " " + a.apellido2;
+        cout << "> " << left << setw(30) << nombreCompleto
+             << "(" << a.ciclo << ")" << setw(5) << ""
+             << setw(15) << a.cedula
+             << fixed << setprecision(2) << setw(10) << a.promedio << endl;
+    }
+
+    cout << "Costa Rica, Guanacaste, 2025\n";
+}
+
 int main() {
     int cantidadAlumnos = pedirEnteroPositivo("Cuantos alumnos desea evaluar? ");
     vector<Alumno> alumnos;
@@ -160,6 +123,7 @@ int main() {
     }
     cout << "\nCaptura de datos personales finalizada" << endl;
 
+    // Mostrar resumen individual
     for (int i = 0; i < (int)alumnos.size(); ++i) {
         Alumno a = alumnos[i];
         cout << "Alumno #" << (i + 1) << ": " << a.nombre << " " << a.apellido1 << " " << a.apellido2
@@ -171,6 +135,21 @@ int main() {
         }
         cout << "\nPromedio: " << a.promedio << "\n\n";
     }
+
+    //Clasificacion Darian
+    vector<Alumno> aprobados;
+    vector<Alumno> reprobados;
+
+    for (const Alumno& a: alumnos){
+        if (a.promedio >= 70.0){
+            aprobados.push_back(a);
+        } else {
+            reprobados.push_back(a);
+        }
+    }
+
+    mostrarAlumnos(aprobados, "APROBADOS");
+    mostrarAlumnos(reprobados, "REPROBADOS");
 
     return 0;
 }
